@@ -13,7 +13,21 @@
 
           <!-- 注册界面 -->
           <el-dialog :visible.sync='registering'>
-            //todo: 注册功能
+            <el-form>
+              <el-form-item label="用户名">
+                <el-input v-model="loginInfo.userName"></el-input>
+              </el-form-item> 
+              <el-form-item label="手机号">
+                <el-input v-model="loginInfo.userID"></el-input>
+              </el-form-item> 
+              <el-form-item label="密码">
+                <el-input v-model="loginInfo.password"></el-input>
+              </el-form-item> 
+              <el-form-item>
+                <el-button @click='register'>注册</el-button>
+                
+              </el-form-item> 
+            </el-form>
           </el-dialog>
           
           <!-- 登录界面 -->
@@ -85,6 +99,24 @@ export default {
           })
 
           this.logining=false
+        },
+        register(){
+          let url='/register'
+          axios.post(url,{
+            UserName: this.loginInfo.userName,
+            UserID: this.loginInfo.userID,
+            Password: this.loginInfo.password
+          }).then(rsp=>{
+            console.log(rsp);
+
+            if (rsp.data.Result == 'OK'){
+              this.$alert('注册成功!','提示')
+            }else{
+              this.$alert(rsp.data.Result,'注册失败')
+            }
+          })
+
+          this.registering=false
         }
     }
 }
