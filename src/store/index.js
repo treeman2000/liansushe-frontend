@@ -17,6 +17,9 @@ export default new Vuex.Store({
     login(state,loginInfo) {
       state.loginInfo = loginInfo
       state.authorized = true
+    },
+    leave(state) {
+      state.authorized = false
     }
   },
   actions: {

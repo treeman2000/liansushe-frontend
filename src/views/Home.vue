@@ -4,7 +4,7 @@
       <el-header style="text-align: right">
           <div v-if="$store.state.authorized">
               <el-button type="text" @click="toProfile">您好，{{$store.state.loginInfo.userName}}</el-button>
-              <el-button  type="text">退出</el-button>
+              <el-button  type="text" @click="$store.commit('leave')">退出</el-button>
           </div>
           <div v-else>
               <el-button type="text" @click='openLegisterPage'>注册</el-button>
@@ -44,10 +44,69 @@
               </el-form-item> 
             </el-form>
           </el-dialog>
-          
       </el-header>
+
       <el-main>
-          i am main
+        <el-row style='margin-top: 10%'>
+          <el-col :span='8' :offset='8'>
+            <el-button type="text" @click="isSearchingHouse=true">搜好房</el-button>
+            <el-button type="text" @click="isSearchingHouse=false">找室友</el-button>
+          </el-col>
+        </el-row>
+        
+        <el-row v-if='isSearchingHouse' type="flex" justify="center">
+          <el-col :span='2'>
+            <el-select v-model="searchHouseReq.price" clearable placeholder="租金">
+              <el-option
+                v-for="item in prices"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span='2'>
+             <el-select v-model="searchHouseReq.roomNumber" clearable placeholder="几居室">
+               <el-option
+                v-for="item in roomNumbers"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+             </el-select>
+          </el-col>
+          <el-col :span='2'>
+            <el-select v-model="searchHouseReq.center" clearable placeholder="区域中心">
+              <el-option
+                v-for="item in centers"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span='2'>
+            <el-select v-model="searchHouseReq.term" clearable placeholder="租期">
+              <el-option
+                v-for="item in terms"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span='1'>
+            <el-button icon="el-icon-search" @click='searchHouseFirstPage'></el-button>
+          </el-col>
+        </el-row>
+        <el-row v-else type="flex" justify="center">
+          <el-col :span='8'>
+            <el-input v-model="keyword" placeholder="请用几个关键词描述您想找的室友"></el-input>
+          </el-col>
+          <el-col :span='1'>
+            <el-button icon="el-icon-search" @click='searchRoommateFirstPage'></el-button>
+          </el-col>
+        </el-row>
       </el-main>
   </el-container>
 </div>
@@ -66,7 +125,45 @@ export default {
               userID:'',
               password:'',
               token:''
-            }
+            },
+            isSearchingHouse:false,
+            keyword:'',
+            searchHouseReq:{
+              price:'',
+              roomNumber:[],
+              center:'',
+              term:''
+            },
+            prices:[
+              {label:'任意',value:0},
+              {label:'<2k',value:1},
+              {label:'2k~3k',value:2},
+              {label:'3k~4k',value:3},
+              {label:'4k~5k',value:4},
+              {label:'>5k',value:5}
+            ],
+            roomNumbers:[
+              {label:'任意',value:0},
+              {label:'一居室',value:1},
+              {label:'二居室',value:2},
+              {label:'三居室',value:3},
+              {label:'大于三居室',value:4}
+            ],
+            centers:[
+              {label:'任意',value:'任意'},
+              {label:'邯郸',value:'邯郸'},
+              {label:'江湾',value:'江湾'},
+              {label:'张江',value:'张江'},
+              {label:'枫林',value:'枫林'}
+            ],
+            terms:[
+              {label:'任意',value:0},
+              {label:'<3月',value:1},
+              {label:'3~6月',value:2},
+              {label:'6~12月',value:3},
+              {label:'>12月',value:4}
+            ],
+            pageSize:10
         }
     },
     methods:{
@@ -96,6 +193,8 @@ export default {
             }else{
               this.$alert(rsp.data.Result,'登录失败')
             }
+          }).catch(err=>{
+            console.log(err)
           })
 
           this.logining=false
@@ -117,7 +216,92 @@ export default {
           })
 
           this.registering=false
+        },
+        searchRoommateFirstPage() {
+          this.searchRoommate(0)
+        },
+        searchRoommate() {
+
+        },
+        searchHouseFirstPage(){
+          this.searchHouse(0)
+        },
+        searchHouse(pageNum) {
+          console.log(this.searchHouseReq)
+
+          if(typeof(this.$store.state.loginInfo.token)=='undefined' || this.$store.state.loginInfo.token==''){
+            this.$alert('请先登录','提示')
+            console.log(this.$store.state.loginInfo.token)
+            return
+          }
+
+          let url='/house/search'
+          axios.post(url,{
+            Token: this.$store.state.loginInfo.token,
+            PageSize: this.pageSize,
+            PageNum: pageNum,
+            RoomNum: this.roomNum,
+            Center: this.searchHouseReq.center,
+            MinPrice: this.minPrice,
+            MaxPrice: this.maxPrice,
+            MinTerm: this.minTerm,
+            MaxTerm: this.maxTerm
+          }).then(rsp=>{
+            console.log(rsp)
+          }).catch(err=>{
+            console.log(err)
+          })
         }
+    },
+    computed:{
+      minPrice(){
+        let i=this.searchHouseReq.price
+        switch(i){
+          case 0: return undefined;
+          case 1: return 0;
+          case 2: return 2000;
+          case 3: return 3000;
+          case 4: return 4000;
+          case 5: return 5000;
+        } 
+      },
+      maxPrice(){
+        let i=this.searchHouseReq.price
+        switch(i){
+          case 0: return undefined;
+          case 1: return 2000;
+          case 2: return 3000;
+          case 3: return 4000;
+          case 4: return 5000;
+          case 5: return undefined;
+        } 
+      },
+      minTerm(){
+        let i=this.searchHouseReq.term
+        switch(i){
+          case 0: return undefined;
+          case 1: return 0;
+          case 2: return 3;
+          case 3: return 6;
+          case 4: return 12;
+        }
+      },
+      maxTerm(){
+        let i=this.searchHouseReq.term
+        switch(i){
+          case 0: return undefined;
+          case 1: return 3;
+          case 2: return 6;
+          case 3: return 12;
+          case 4: return undefined;
+        }
+      },
+      roomNum() {
+        if(this.searchHouseReq.roomNumber==0){
+          return undefined
+        }
+        return [this.searchHouseReq.roomNumber]
+      }
     }
 }
 </script>
