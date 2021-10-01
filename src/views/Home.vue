@@ -47,6 +47,7 @@
       </el-header>
 
       <el-main>
+        <!-- 搜索框 -->
         <el-row style='margin-top: 10%'>
           <el-col :span='8' :offset='8'>
             <el-button type="text" @click="isSearchingHouse=true">搜好房</el-button>
@@ -107,6 +108,31 @@
             <el-button icon="el-icon-search" @click='searchRoommateFirstPage'></el-button>
           </el-col>
         </el-row>
+
+        <!-- 结果框 -->
+        <el-row>
+          <el-col>
+            <el-table :data='houseInfos' style="width: 100%">
+              <el-table-column>
+                <template slot-scope="scope">
+                  <el-image :src='scope.row.ImgURL' style="width: 200px; height: 200px">
+                      <div slot="error">暂无房屋图片</div>
+                  </el-image>
+                </template>
+              </el-table-column>
+              <el-table-column>
+                <template slot-scope="scope">
+                  <table-item-house :houseInfo='scope.row'></table-item-house>
+                </template>
+              </el-table-column>
+              <el-table-column>
+                <template slot-scope="scope">
+                  <el-button @click='contact(scope.row.HouseID)'> 立即咨询</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
       </el-main>
   </el-container>
 </div>
@@ -114,6 +140,9 @@
 
 <script>
 import axios from 'axios'
+import tableItemHouse from '../components/tableItemHouse.vue'
+import img from '../assets/logo.png'
+// import img2 from '../assets/nana7mi.jpeg'
 
 export default {
     data () {
@@ -163,7 +192,23 @@ export default {
               {label:'6~12月',value:3},
               {label:'>12月',value:4}
             ],
-            pageSize:10
+            pageSize:10,
+            // houseInfos:[],
+            // debug
+            houseInfos:[{
+                HouseID:'123123',
+                ImgURL:img,
+                Place:'我家',
+                Area:'114',
+                Storey:'-1',
+                Room:1,
+                Hall:1,
+                Price:998,
+                Deposit:2999,
+                Direction:'西',
+                Facility:15
+              }
+            ]
         }
     },
     methods:{
@@ -251,6 +296,11 @@ export default {
           }).catch(err=>{
             console.log(err)
           })
+        },
+        contact(HouseID){
+          console.log(HouseID)
+
+          this.$alert('联系方式：1145141919','提示')
         }
     },
     computed:{
@@ -302,6 +352,9 @@ export default {
         }
         return [this.searchHouseReq.roomNumber]
       }
+    },
+    components:{
+      tableItemHouse
     }
 }
 </script>
