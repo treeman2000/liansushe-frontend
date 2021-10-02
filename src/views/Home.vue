@@ -47,6 +47,7 @@
       </el-header>
 
       <el-main>
+        <!-- 搜索框 -->
         <el-row style='margin-top: 10%'>
           <el-col :span='8' :offset='8'>
             <el-button type="text" @click="isSearchingHouse=true">搜好房</el-button>
@@ -107,6 +108,39 @@
             <el-button icon="el-icon-search" @click='searchRoommateFirstPage'></el-button>
           </el-col>
         </el-row>
+
+        <!-- 结果框 -->
+        <el-row type="flex" justify="center">
+          <el-col>
+            <el-table :data='houseInfos' style="width: 100%">
+              <el-table-column>
+                <template slot-scope="scope">
+                  <el-image :src='scope.row.ImgURL' style="width: 200px; height: 200px">
+                      <div slot="error">暂无房屋图片</div>
+                  </el-image>
+                </template>
+              </el-table-column>
+              <el-table-column>
+                <template slot-scope="scope">
+                  <table-item-house :houseInfo='scope.row'></table-item-house>
+                </template>
+              </el-table-column>
+              <el-table-column>
+                <template slot-scope="scope">
+                  <el-button @click='contact(scope.row.HouseID)'> 立即咨询</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-pagination 
+              background 
+              layout="prev, pager, next" 
+              :total="itemNumber" 
+              @current-change='searchHouse'
+              :page-size='pageSize'
+              :hide-on-single-page="hideOnSinglePage">
+            </el-pagination>
+          </el-col>
+        </el-row>
       </el-main>
   </el-container>
 </div>
@@ -114,6 +148,7 @@
 
 <script>
 import axios from 'axios'
+import tableItemHouse from '../components/tableItemHouse.vue'
 
 export default {
     data () {
@@ -126,7 +161,7 @@ export default {
               password:'',
               token:''
             },
-            isSearchingHouse:false,
+            isSearchingHouse:true,
             keyword:'',
             searchHouseReq:{
               price:'',
@@ -163,7 +198,10 @@ export default {
               {label:'6~12月',value:3},
               {label:'>12月',value:4}
             ],
-            pageSize:10
+            pageSize:10,
+            houseInfos:[],
+            itemNumber:0,
+            hideOnSinglePage:true
         }
     },
     methods:{
@@ -224,8 +262,9 @@ export default {
 
         },
         searchHouseFirstPage(){
-          this.searchHouse(0)
+          this.searchHouse(1)
         },
+        // 参数的pageNum从1开始，而接口是从0开始，故减1
         searchHouse(pageNum) {
           console.log(this.searchHouseReq)
 
@@ -239,18 +278,30 @@ export default {
           axios.post(url,{
             Token: this.$store.state.loginInfo.token,
             PageSize: this.pageSize,
-            PageNum: pageNum,
+            PageNum: pageNum-1,
             RoomNum: this.roomNum,
-            Center: this.searchHouseReq.center,
+            Center: [this.searchHouseReq.center],
             MinPrice: this.minPrice,
             MaxPrice: this.maxPrice,
             MinTerm: this.minTerm,
             MaxTerm: this.maxTerm
           }).then(rsp=>{
             console.log(rsp)
+            
+            if(rsp.data.Result!='OK'){
+              this.$alert(rsp.data.Result,'提示')
+              return
+            }
+            this.itemNumber=rsp.data.Number
+            this.houseInfos=rsp.data.HouseInfos
           }).catch(err=>{
             console.log(err)
           })
+        },
+        contact(HouseID){
+          console.log(HouseID)
+
+          this.$alert('联系方式：1145141919','提示')
         }
     },
     computed:{
@@ -302,6 +353,9 @@ export default {
         }
         return [this.searchHouseReq.roomNumber]
       }
+    },
+    components:{
+      tableItemHouse
     }
 }
 </script>
