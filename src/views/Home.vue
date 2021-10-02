@@ -110,7 +110,7 @@
         </el-row>
 
         <!-- 结果框 -->
-        <el-row>
+        <el-row type="flex" justify="center">
           <el-col>
             <el-table :data='houseInfos' style="width: 100%">
               <el-table-column>
@@ -131,6 +131,14 @@
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination 
+              background 
+              layout="prev, pager, next" 
+              :total="itemNumber" 
+              @current-change='searchHouse'
+              :page-size='pageSize'
+              :hide-on-single-page="hideOnSinglePage">
+            </el-pagination>
           </el-col>
         </el-row>
       </el-main>
@@ -141,8 +149,6 @@
 <script>
 import axios from 'axios'
 import tableItemHouse from '../components/tableItemHouse.vue'
-import img from '../assets/logo.png'
-// import img2 from '../assets/nana7mi.jpeg'
 
 export default {
     data () {
@@ -155,7 +161,7 @@ export default {
               password:'',
               token:''
             },
-            isSearchingHouse:false,
+            isSearchingHouse:true,
             keyword:'',
             searchHouseReq:{
               price:'',
@@ -193,22 +199,9 @@ export default {
               {label:'>12月',value:4}
             ],
             pageSize:10,
-            // houseInfos:[],
-            // debug
-            houseInfos:[{
-                HouseID:'123123',
-                ImgURL:img,
-                Place:'我家',
-                Area:'114',
-                Storey:'-1',
-                Room:1,
-                Hall:1,
-                Price:998,
-                Deposit:2999,
-                Direction:'西',
-                Facility:15
-              }
-            ]
+            houseInfos:[],
+            itemNumber:0,
+            hideOnSinglePage:true
         }
     },
     methods:{
@@ -269,8 +262,9 @@ export default {
 
         },
         searchHouseFirstPage(){
-          this.searchHouse(0)
+          this.searchHouse(1)
         },
+        // 参数的pageNum从1开始，而接口是从0开始，故减1
         searchHouse(pageNum) {
           console.log(this.searchHouseReq)
 
@@ -284,15 +278,22 @@ export default {
           axios.post(url,{
             Token: this.$store.state.loginInfo.token,
             PageSize: this.pageSize,
-            PageNum: pageNum,
+            PageNum: pageNum-1,
             RoomNum: this.roomNum,
-            Center: this.searchHouseReq.center,
+            Center: [this.searchHouseReq.center],
             MinPrice: this.minPrice,
             MaxPrice: this.maxPrice,
             MinTerm: this.minTerm,
             MaxTerm: this.maxTerm
           }).then(rsp=>{
             console.log(rsp)
+            
+            if(rsp.data.Result!='OK'){
+              this.$alert(rsp.data.Result,'提示')
+              return
+            }
+            this.itemNumber=rsp.data.Number
+            this.houseInfos=rsp.data.HouseInfos
           }).catch(err=>{
             console.log(err)
           })

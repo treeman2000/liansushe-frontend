@@ -13,8 +13,12 @@
         <el-col :span=12>朝向：{{houseInfo.Direction}}</el-col>
     </el-row>
     <el-row>
+        <el-col :span=12>电梯：{{getElevator()}}</el-col>
+        <el-col :span=12>期望租期：{{houseInfo.Term}} 个月</el-col>
+    </el-row>
+    <el-row>
         <el-col :span=12>户型：{{houseInfo.Room}}室{{houseInfo.Hall}}厅</el-col>
-        <el-col :span=12>设施：{{getFacility(houseInfo.Facility)}}</el-col>
+        <el-col :span=12>设施：{{getFacility()}}</el-col>
     </el-row>
     
 </div>  
@@ -29,7 +33,8 @@ export default {
         }
     },
     methods:{
-        getFacility(n){
+        getFacility(){
+            let n=this.houseInfo.Facility
             let facility=''
             for(let i=0;i<16;i++){
                 if((n&(1<<i))!=0){
@@ -37,6 +42,9 @@ export default {
                 }
             }
             return facility
+        },
+        getElevator(){
+            return this.houseInfo.Elevator==true?'有':'无'
         }
     }
 }
