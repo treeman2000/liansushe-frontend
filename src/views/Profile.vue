@@ -201,13 +201,16 @@ export default {
       ImgURL:'',
       filterOption:[
         {
-          value:'全部'
+          value:'all',
+          label:'全部'
         },
         {
-          value:'已上线'
+          value:'online',
+          label:'已上线'
         },
         {
-          value:'已下线'
+          value:'offline',
+          label:'已下线'
         }
       ],
       filterValue:''
@@ -256,10 +259,7 @@ export default {
       }
       var dt=new Date;
       this.uuid=dt.getTime();
-      this.ImgURL="/image/:"+this.uuid;
-      this.file=file.raw;
-      console.log(this.ImgURL)
-      console.log(file);
+      this.ImgURL="/image/"+this.uuid;
     },
     toHome(){
       this.$router.push('./')
@@ -286,7 +286,7 @@ export default {
       let url='/house/search'
       axios.post(url,{
         Token:this.$store.state.loginInfo.token,
-        filterValue:this.filterValue
+        State:this.filterValue
       }).then(rsp=>{
         console.log(rsp);
         if (rsp.data.Result == 'OK'){
