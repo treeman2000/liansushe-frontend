@@ -2,7 +2,7 @@
   <div>
       <el-container>
         <el-header  style="text-align: right">
-          <el-button type="text">返回搜索界面</el-button>
+          <el-button type="text" @click="toHome">返回搜索界面</el-button>
         </el-header>
       </el-container>
       
@@ -13,8 +13,9 @@
           <el-menu>
             <el-menu-item-group >
               <el-menu-item index="1" @click="showValue=1">个人信息</el-menu-item>
-              <el-menu-item index="2" @click="showValue=2">添加房子</el-menu-item>
-              <el-menu-item index="3" @click="showValue=3">查看房子</el-menu-item>
+              <el-menu-item index="2" @click="showValue=2">添加房屋</el-menu-item>
+              <el-menu-item index="3" @click="showValue=3">查看房屋</el-menu-item>
+              
             </el-menu-item-group>
           </el-menu>
         </el-aside>
@@ -76,12 +77,10 @@
             <el-form-item label="房屋图片">
               <el-upload
                 class="houseImg"
-                ref="upload"
-                action=""
+                :action="ImgURL"
                 :on-preview="handlePreview"
                 :on-remove="handleRemove"
                 :file-list="fileList"
-                :auto-upload="false"
                 :on-change="handleHouseImg"
                 accept="">
                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -92,7 +91,15 @@
           <el-button type="primary" @click="CreateHouseInfo">确认添加</el-button>
         </el-main>
         <el-main v-if="showValue==3">
-          <el-table :data="OnlineHouseInfo" style="width: 100%">
+          <el-select v-model="filterValue" placeholder="请选择筛选条件" @change="onChangeFilter">
+            <el-option
+              v-for="item in filterOption"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-table :data="OnorOfflineHouseInfo" style="width: 100%">
             <el-table-column>
               <template slot-scope="scope">
                 <el-image :src='scope.row.ImgURL' style="width: 200px; height: 200px">
@@ -107,7 +114,7 @@
             </el-table-column>
             <el-table-column>
                 <template slot-scope="scope">
-                  <el-button @click='offline(scope.row.HouseID)'> 下线</el-button>
+                  <el-button @click='onoffline(scope.row.HouseID,scope.row.IsOnline)'> 上/下线</el-button>
                 </template>
               </el-table-column>
           </el-table>
@@ -189,9 +196,21 @@ export default {
           label:'洗衣机'
         },
       ],
-      HouseImgUrl:'',
-      OnlineHouseInfo:[],
-      OfflineHouseInfo:[]
+      OnorOfflineHouseInfo:[],
+      uuid:undefined,
+      ImgURL:'',
+      filterOption:[
+        {
+          value:'全部'
+        },
+        {
+          value:'已上线'
+        },
+        {
+          value:'已下线'
+        }
+      ],
+      filterValue:''
     };
   },
   methods:{
@@ -212,7 +231,7 @@ export default {
         Direction:this.HouseInfo.Direction,
         Facility:this.HouseInfo.Facility,
         Note:this.HouseInfo.Note,
-        Image:this.file
+        Image:this.uuid
       }).then(rsp=>{
         console.log(rsp);
         if (rsp.data.Result == 'OK'){
@@ -229,17 +248,53 @@ export default {
       console.log(file);
     },
     handleHouseImg(file,fileList){
-      const isJPG=file.raw.type==='image/jpeg'
-      const isPNG=file.raw.type==='image/png'
+      const isJPG=file.raw.type==='image/jpeg';
+      const isPNG=file.raw.type==='image/png';
       if(!isJPG&&!isPNG){
-        this.$alert('上传图片只能是JPG/PNG格式！')
-        return false
+        this.$alert('上传图片只能是JPG/PNG格式！');
+        return false;
       }
-      this.HouseImgUrl=file.raw;
-      console.log(file.raw);
+      var dt=new Date;
+      this.uuid=dt.getTime();
+      this.ImgURL="/image/:"+this.uuid;
+      this.file=file.raw;
+      console.log(this.ImgURL)
+      console.log(file);
     },
-    offline(HouseID){
-
+    toHome(){
+      this.$router.push('./')
+    },
+    onoffline(HouseID,IsOnline){
+      if(IsOnline){
+        let url='/house/set_offline'
+      }else{
+        let url='/house/set_online'
+      }
+      axios.post(url,{
+        Token:this.$store.state.loginInfo.token,
+        HouseID:HouseID
+      }).then(rsp=>{
+        console.log(rsp);
+        if (rsp.data.Result == 'OK'){
+          this.$alert('修改成功!','提示')
+        }else{
+          this.$alert(rsp.data.Result,'修改失败')
+        }
+      })
+    },
+    onChangeFilter(){
+      let url='/house/search'
+      axios.post(url,{
+        Token:this.$store.state.loginInfo.token,
+        filterValue:this.filterValue
+      }).then(rsp=>{
+        console.log(rsp);
+        if (rsp.data.Result == 'OK'){
+          this.OnorOfflineHouseInfo=rsp.data.HouseInfos
+        }else{
+          this.$alert(rsp.data.Result,'服务器繁忙，请稍后再试')
+        }
+      })
     }
   }
 }
