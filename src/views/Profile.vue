@@ -14,7 +14,7 @@
             <el-menu-item-group >
               <el-menu-item index="1" @click="showValue=1">个人信息</el-menu-item>
               <el-menu-item index="2" @click="showValue=2">添加房屋</el-menu-item>
-              <el-menu-item index="3" @click="showValue=3">查看房屋</el-menu-item>
+              <el-menu-item index="3" @click="checkHouse">查看房屋</el-menu-item>
               
             </el-menu-item-group>
           </el-menu>
@@ -91,7 +91,7 @@
           <el-button type="primary" @click="CreateHouseInfo">确认添加</el-button>
         </el-main>
         <el-main v-if="showValue==3">
-          <el-select v-model="filterValue" placeholder="请选择筛选条件" @change="onChangeFilter">
+          <el-select v-model="filterValue" placeholder="请选择筛选条件" @change="onChangeFilter(1)">
             <el-option
               v-for="item in filterOption"
               :key="item.value"
@@ -118,6 +118,14 @@
                 </template>
               </el-table-column>
           </el-table>
+          <el-pagination 
+              background 
+              layout="prev, pager, next" 
+              :total="itemNumber" 
+              @current-change='searchHouse'
+              :page-size='pageSize'
+              :hide-on-single-page="hideOnSinglePage">
+            </el-pagination>
         </el-main>
       </el-container>
   </div>
@@ -213,7 +221,9 @@ export default {
           label:'已下线'
         }
       ],
-      filterValue:''
+      filterValue:'all',
+      pageSize:10,
+      itemNumber:undefined
     };
   },
   methods:{
@@ -282,14 +292,21 @@ export default {
         }
       })
     },
-    onChangeFilter(){
+    checkHouse(){
+      this.showValue=3;
+      this.onChangeFilter(1)
+    },
+    onChangeFilter(pageNum){
       let url='/house/search'
       axios.post(url,{
         Token:this.$store.state.loginInfo.token,
-        State:this.filterValue
+        State:this.filterValue,
+        PageSize:this.pageSize,
+        PageNum:pageNum-1
       }).then(rsp=>{
         console.log(rsp);
         if (rsp.data.Result == 'OK'){
+          this.itemNumber=rsp.data.Number
           this.OnorOfflineHouseInfo=rsp.data.HouseInfos
         }else{
           this.$alert(rsp.data.Result,'服务器繁忙，请稍后再试')

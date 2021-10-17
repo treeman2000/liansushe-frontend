@@ -48,13 +48,15 @@
 
       <el-main>
         <!-- 搜索框 -->
-        <el-row style='margin-top: 10%'>
+        <div class="bgImg">
+          <el-row  style='height:400px'>
+          </el-row>
+        <el-row >
           <el-col :span='8' :offset='8'>
             <el-button type="text" @click="isSearchingHouse=true">搜好房</el-button>
             <el-button type="text" @click="isSearchingHouse=false">找室友</el-button>
           </el-col>
         </el-row>
-        
         <el-row v-if='isSearchingHouse' type="flex" justify="center">
           <el-col :span='2'>
             <el-select v-model="searchHouseReq.price" clearable placeholder="租金">
@@ -108,7 +110,9 @@
             <el-button icon="el-icon-search" @click='searchRoommateFirstPage'></el-button>
           </el-col>
         </el-row>
-
+        <el-row style="height: 50px">
+        </el-row>
+       </div>
         <!-- 结果框 -->
         <el-row type="flex" justify="center">
           <el-col>
@@ -201,7 +205,8 @@ export default {
             pageSize:10,
             houseInfos:[],
             itemNumber:0,
-            hideOnSinglePage:true
+            hideOnSinglePage:true,
+            backImgUrl:require("../assets/backgroundImg.jpg")
         }
     },
     methods:{
@@ -361,5 +366,10 @@ export default {
 </script>
 
 <style>
-
+.bgImg{
+  background-image: url(../assets/backgroundImg.jpg);
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-size: 100% 100%;
+}
 </style>
