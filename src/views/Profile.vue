@@ -62,7 +62,7 @@
                <el-input v-model="HouseInfo.Direction" style="width:80px" ></el-input>
             </el-form-item>
             <el-form-item label="设施">
-              <el-select v-model="HouseInfo.Facility" style="width:400px" multiple placeholder="请选择">
+              <el-select v-model="HouseInfo.FacilityValue" style="width:400px" multiple placeholder="请选择">
                 <el-option
                   v-for="item in FacilityOptions"
                   :key="item.value"
@@ -157,7 +157,7 @@ export default {
         Storey:undefined,
         Term:undefined,
         Direction:'',
-        Facility:[],
+        FacilityValue:[],
         Note:''
       },
       fileList:[],
@@ -229,6 +229,7 @@ export default {
   methods:{
     CreateHouseInfo(){
       let url='/house/add'
+
       axios.post(url,{
         Token:this.$store.state.loginInfo.token,
         Place:this.HouseInfo.Place,
@@ -242,7 +243,7 @@ export default {
         Storey:this.HouseInfo.Storey,
         Term:this.HouseInfo.Term,
         Direction:this.HouseInfo.Direction,
-        Facility:this.HouseInfo.Facility,
+        Facility:this.createFValue(this.HouseInfo.FacilityValue),
         Note:this.HouseInfo.Note,
         Image:this.uuid
       }).then(rsp=>{
@@ -312,6 +313,15 @@ export default {
           this.$alert(rsp.data.Result,'服务器繁忙，请稍后再试')
         }
       })
+    },
+    createFValue(Fvs){
+      let value=0;
+      for(let i=0;i<Fvs.length;i++){
+        value=value|(0x1<<Fvs[i]);
+      }
+      console.log(Fvs,typeof(value),value);
+      
+      return value;
     }
   }
 }
