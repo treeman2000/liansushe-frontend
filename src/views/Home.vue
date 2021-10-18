@@ -362,7 +362,7 @@ export default {
       },
       center(){
         console.log('in center',this.searchHouseReq.center)
-        if(this.searchHouseReq.center=='任意'){
+        if(this.searchHouseReq.center=='任意' || this.searchHouseReq.center==''){
           console.log('!!!!!!!!!!!')
           return []
         }

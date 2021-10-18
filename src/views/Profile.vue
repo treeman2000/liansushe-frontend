@@ -282,10 +282,11 @@ export default {
       this.$router.push('./')
     },
     onoffline(HouseID,IsOnline){
+      let url
       if(IsOnline){
-        let url='/house/set_offline'
+        url='/house/set_offline'
       }else{
-        let url='/house/set_online'
+        url='/house/set_online'
       }
       axios.post(url,{
         Token:this.$store.state.loginInfo.token,
