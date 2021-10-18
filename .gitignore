@@ -4,6 +4,8 @@ node_modules
 
 liansushe-mock.exe
 liansushe.exe
+/img
+test.js
 
 # local env files
 .env.local

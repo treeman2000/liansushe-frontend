@@ -84,7 +84,7 @@
                 :on-change="handleHouseImg"
                 accept="">
                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+                <div slot="tip" class="el-upload__tip">请上传一张jpg/png格式的房屋图片</div>
               </el-upload>
             </el-form-item>
           </el-form>
@@ -255,6 +255,7 @@ export default {
         }else{
           this.$alert(rsp.data.Result,'创建失败')
         }
+        this.updateUUID()
       })
     },
     handleRemove(file,fileList){
@@ -270,9 +271,12 @@ export default {
         this.$alert('上传图片只能是JPG/PNG格式！');
         return false;
       }
-      var dt=new Date;
-      this.uuid=dt.getTime();
-      this.ImgURL="/image/"+this.uuid;
+    },
+    //刷新uuid和url()
+    updateUUID(){
+      let dt=new Date;
+      this.uuid=dt.getTime().toString();
+      this.ImgURL='/image/'+this.uuid
     },
     toHome(){
       this.$router.push('./')
@@ -329,6 +333,9 @@ export default {
   },
   components:{
       tableItemHouse
+  },
+  mounted(){
+    this.updateUUID()
   }
 }
 </script>
