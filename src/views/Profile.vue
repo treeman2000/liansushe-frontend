@@ -99,7 +99,8 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-table :data="OnorOfflineHouseInfo" style="width: 100%">
+          <!-- 查看房屋结果框 -->
+          <el-table :data='OnorOfflineHouseInfo' style="width: 100%">
             <el-table-column>
               <template slot-scope="scope">
                 <el-image :src='scope.row.ImgURL' style="width: 200px; height: 200px">
@@ -118,6 +119,7 @@
                 </template>
               </el-table-column>
           </el-table>
+          <!-- -->
           <el-pagination 
               background 
               layout="prev, pager, next" 
@@ -234,14 +236,14 @@ export default {
         Token:this.$store.state.loginInfo.token,
         Place:this.HouseInfo.Place,
         Center:this.HouseInfo.Center,
-        Area:this.HouseInfo.Area,
-        Price:this.HouseInfo.Price,
-        Deposit:this.HouseInfo.Deposit,
-        Room:this.HouseInfo.Room,
-        Hall:this.HouseInfo.Hall,
-        Elevator:this.HouseInfo.Elevator,
-        Storey:this.HouseInfo.Storey,
-        Term:this.HouseInfo.Term,
+        Area:Number(this.HouseInfo.Area),
+        Price:Number(this.HouseInfo.Price),
+        Deposit:Number(this.HouseInfo.Deposit),
+        Room:Number(this.HouseInfo.Room),
+        Hall:Number(this.HouseInfo.Hall),
+        Elevator:this.HouseInfo.Elevator=="true",
+        Storey:Number(this.HouseInfo.Storey),
+        Term:Number(this.HouseInfo.Term),
         Direction:this.HouseInfo.Direction,
         Facility:this.createFValue(this.HouseInfo.FacilityValue),
         Note:this.HouseInfo.Note,
@@ -295,7 +297,7 @@ export default {
     },
     checkHouse(){
       this.showValue=3;
-      this.onChangeFilter(1)
+      this.onChangeFilter(1);
     },
     onChangeFilter(pageNum){
       let url='/house/search'
@@ -309,6 +311,7 @@ export default {
         if (rsp.data.Result == 'OK'){
           this.itemNumber=rsp.data.Number
           this.OnorOfflineHouseInfo=rsp.data.HouseInfos
+          console.log(this.OnorOfflineHouseInfo)
         }else{
           this.$alert(rsp.data.Result,'服务器繁忙，请稍后再试')
         }
@@ -323,6 +326,9 @@ export default {
       
       return value;
     }
+  },
+  components:{
+      tableItemHouse
   }
 }
 </script>
