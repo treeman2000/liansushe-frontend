@@ -120,6 +120,7 @@
               </el-table-column>
           </el-table>
           <!-- -->
+          <div style="text-align:center">
           <el-pagination 
               background 
               layout="prev, pager, next" 
@@ -128,6 +129,7 @@
               :page-size='pageSize'
               :hide-on-single-page="hideOnSinglePage">
             </el-pagination>
+          </div>
         </el-main>
       </el-container>
   </div>
@@ -225,7 +227,8 @@ export default {
       ],
       filterValue:'all',
       pageSize:10,
-      itemNumber:undefined
+      itemNumber:undefined,
+      hideOnSinglePage:false
     };
   },
   methods:{
