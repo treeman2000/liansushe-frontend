@@ -285,12 +285,14 @@ export default {
             PageSize: this.pageSize,
             PageNum: pageNum-1,
             RoomNum: this.roomNum,
-            Center: [this.searchHouseReq.center],
+            Center: this.center,
             MinPrice: this.minPrice,
             MaxPrice: this.maxPrice,
             MinTerm: this.minTerm,
-            MaxTerm: this.maxTerm
+            MaxTerm: this.maxTerm,
+            UserID: ''
           }).then(rsp=>{
+            console.log("this.center returns",this.center)
             console.log(rsp)
             
             if(rsp.data.Result!='OK'){
@@ -357,6 +359,14 @@ export default {
           return undefined
         }
         return [this.searchHouseReq.roomNumber]
+      },
+      center(){
+        console.log('in center',this.searchHouseReq.center)
+        if(this.searchHouseReq.center=='任意'){
+          console.log('!!!!!!!!!!!')
+          return []
+        }
+        return [this.searchHouseReq.center]
       }
     },
     components:{
