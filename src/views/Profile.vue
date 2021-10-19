@@ -114,6 +114,11 @@
               </template>
             </el-table-column>
             <el-table-column>
+              <template slot-scope="scope">
+                状态：{{scope.row.IsOnline?"已上线":"已下线"}}
+              </template>
+            </el-table-column>
+            <el-table-column>
                 <template slot-scope="scope">
                   <el-button @click='onoffline(scope.row.HouseID,scope.row.IsOnline)'> 上/下线</el-button>
                 </template>
@@ -295,6 +300,7 @@ export default {
         console.log(rsp);
         if (rsp.data.Result == 'OK'){
           this.$alert('修改成功!','提示')
+          this.onChangeFilter(1);
         }else{
           this.$alert(rsp.data.Result,'修改失败')
         }
