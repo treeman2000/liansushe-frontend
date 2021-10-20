@@ -3,6 +3,10 @@ node_modules
 /dist
 
 liansushe-mock.exe
+liansushe.exe
+/img
+test.js
+*.zip
 
 # local env files
 .env.local
