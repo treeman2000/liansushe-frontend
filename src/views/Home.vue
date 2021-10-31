@@ -164,8 +164,8 @@ export default {
             logining:false,
             loginInfo:{
               userName:'',
-              userID:'',
-              password:'',
+              userID:'defaultID',
+              password:'defaultPwd',
               verificationCode:'',
               token:''
             },
