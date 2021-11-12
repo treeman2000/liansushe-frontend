@@ -115,6 +115,11 @@
             </el-table-column>
             <el-table-column>
                 <template slot-scope="scope">
+                  <el-button @click='generateVR(scope.row.HouseID,scope.row.IsOnline)'> VR看房</el-button>
+                </template>
+              </el-table-column>
+            <el-table-column>
+                <template slot-scope="scope">
                   <el-button @click='onoffline(scope.row.HouseID,scope.row.IsOnline)'> 上/下线</el-button>
                 </template>
               </el-table-column>
@@ -334,6 +339,9 @@ export default {
       console.log(Fvs,typeof(value),value);
       
       return value;
+    },
+    generateVR(HouseID){
+      
     }
   },
   components:{

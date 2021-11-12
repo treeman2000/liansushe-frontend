@@ -131,6 +131,8 @@
               </el-table-column>
               <el-table-column>
                 <template slot-scope="scope">
+                  <el-button @click='generateVR(scope.row.HouseID)'> VR看房</el-button>
+                  <el-button @click='addtocollection(scope.row.HouseID)'> 添加收藏</el-button>
                   <el-button @click='contact(scope.row.HouseID)'> 立即咨询</el-button>
                 </template>
               </el-table-column>
@@ -309,6 +311,12 @@ export default {
           console.log(HouseID)
 
           this.$alert('联系方式：1145141919','提示')
+        },
+        generateVR(HouseID){
+          this.$router.push("./VR/"+HouseID+".html")
+        },
+        addtocollection(HouseID){
+
         }
     },
     computed:{
