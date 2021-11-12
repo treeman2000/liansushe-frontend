@@ -6,6 +6,8 @@ liansushe-mock.exe
 liansushe.exe
 /img
 test.js
+*.zip
+/vr
 
 # local env files
 .env.local
