@@ -16,16 +16,19 @@
             <el-form>
               <el-form-item label="用户名">
                 <el-input v-model="loginInfo.userName"></el-input>
-              </el-form-item> 
-              <el-form-item label="手机号">
+              </el-form-item>                   
+              <el-form-item label="学邮">
                 <el-input v-model="loginInfo.userID"></el-input>
               </el-form-item> 
               <el-form-item label="密码">
                 <el-input v-model="loginInfo.password"></el-input>
               </el-form-item> 
+              <el-form-item label="验证码">
+                <el-input v-model="loginInfo.verificationCode"></el-input>
+              </el-form-item> 
               <el-form-item>
+                <el-button @click='verify'>获取验证码</el-button>
                 <el-button @click='register'>注册</el-button>
-                
               </el-form-item> 
             </el-form>
           </el-dialog>
@@ -131,6 +134,8 @@
               </el-table-column>
               <el-table-column>
                 <template slot-scope="scope">
+                  <el-button @click='generateVR(scope.row.HouseID)'> VR看房</el-button>
+                  <el-button @click='addtocollection(scope.row.HouseID)'> 添加收藏</el-button>
                   <el-button @click='contact(scope.row.HouseID)'> 立即咨询</el-button>
                 </template>
               </el-table-column>
@@ -161,8 +166,9 @@ export default {
             logining:false,
             loginInfo:{
               userName:'',
-              userID:'',
-              password:'',
+              userID:'defaultID',
+              password:'defaultPwd',
+              verificationCode:'',
               token:''
             },
             isSearchingHouse:true,
@@ -242,12 +248,28 @@ export default {
 
           this.logining=false
         },
+        verify(){
+          let url='/verify'
+          axios.post(url,{
+            EmailAddress:this.loginInfo.userID
+          }).then(res=>{
+            console.log(res)
+            if(res.data.Result!='OK'){
+              this.$alert(res.data.Result,'提示')
+              return
+            }
+            this.$alert('发送成功','提示')
+          }).catch(err=>{
+            console.log(err)
+          })
+        },
         register(){
-          let url='/register'
+          let url='/register/v2'
           axios.post(url,{
             UserName: this.loginInfo.userName,
-            UserID: this.loginInfo.userID,
-            Password: this.loginInfo.password
+            EmailAddress: this.loginInfo.userID,
+            Password: this.loginInfo.password,
+            VerificationCode:this.loginInfo.verificationCode
           }).then(rsp=>{
             console.log(rsp);
 
@@ -309,6 +331,12 @@ export default {
           console.log(HouseID)
 
           this.$alert('联系方式：1145141919','提示')
+        },
+        generateVR(HouseID){
+          this.$router.push("./VR/"+HouseID+".html")
+        },
+        addtocollection(HouseID){
+
         }
     },
     computed:{
