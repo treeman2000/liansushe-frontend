@@ -36,7 +36,7 @@
           <!-- 登录界面 -->
           <el-dialog :visible.sync='logining'>
             <el-form>
-              <el-form-item label="帐号（手机号）">
+              <el-form-item label="帐号（邮箱）">
                 <el-input v-model="loginInfo.userID"></el-input>
               </el-form-item> 
               <el-form-item label="密码">
