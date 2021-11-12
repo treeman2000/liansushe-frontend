@@ -120,11 +120,17 @@
             </el-table-column>
             <el-table-column>
                 <template slot-scope="scope">
+                  <el-button @click='generateVR(scope.row.HouseID,scope.row.IsOnline)'> VR看房</el-button>
+                </template>
+              </el-table-column>
+            <el-table-column>
+                <template slot-scope="scope">
                   <el-button @click='onoffline(scope.row.HouseID,scope.row.IsOnline)'> 上/下线</el-button>
                 </template>
               </el-table-column>
           </el-table>
           <!-- -->
+          <div style="text-align:center">
           <el-pagination 
               background 
               layout="prev, pager, next" 
@@ -133,6 +139,7 @@
               :page-size='pageSize'
               :hide-on-single-page="hideOnSinglePage">
             </el-pagination>
+          </div>
         </el-main>
       </el-container>
   </div>
@@ -230,7 +237,8 @@ export default {
       ],
       filterValue:'all',
       pageSize:10,
-      itemNumber:undefined
+      itemNumber:undefined,
+      hideOnSinglePage:false
     };
   },
   methods:{
@@ -336,6 +344,9 @@ export default {
       console.log(Fvs,typeof(value),value);
       
       return value;
+    },
+    generateVR(HouseID){
+      
     }
   },
   components:{
