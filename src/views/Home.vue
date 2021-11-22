@@ -119,11 +119,11 @@
         <!-- 结果框 -->
         <el-row type="flex" justify="center">
           <el-col>
-            <el-table :data='houseInfos' style="width: 100%">
+            <el-table v-if="isSearchingHouse" :data='houseInfos' style="width: 100%">
               <el-table-column>
                 <template slot-scope="scope">
                   <el-image :src='scope.row.ImgURL' style="width: 200px; height: 200px">
-                      <div slot="error">暂无房屋图片</div>
+                    <div slot="error">暂无房屋图片</div>
                   </el-image>
                 </template>
               </el-table-column>
@@ -140,11 +140,18 @@
                 </template>
               </el-table-column>
             </el-table>
+            <el-table v-else :data="profiles"  style="width: 100%">
+              <el-table-column>
+                <template slot-scope="scope">
+                  <table-item-profile :profile='scope.row'></table-item-profile>
+                </template>
+              </el-table-column>
+            </el-table>
             <el-pagination 
               background 
               layout="prev, pager, next" 
               :total="itemNumber" 
-              @current-change='searchHouse'
+              @current-change='changePage'
               :page-size='pageSize'
               :hide-on-single-page="hideOnSinglePage">
             </el-pagination>
@@ -158,6 +165,7 @@
 <script>
 import axios from 'axios'
 import tableItemHouse from '../components/tableItemHouse.vue'
+import TableItemProfile from '../components/tableItemProfile.vue'
 
 export default {
     data () {
@@ -212,7 +220,21 @@ export default {
             houseInfos:[],
             itemNumber:0,
             hideOnSinglePage:true,
-            backImgUrl:require("../assets/backgroundImg.jpg")
+            backImgUrl:require("../assets/backgroundImg.jpg"),
+            profiles:[{
+              UserID:this.$store.state.loginInfo.userID,
+              Age:24,
+              Gender:'男',
+              Major:'计算机',
+              Hometown:'老家',
+              Character:'打',
+              Hobby:'大腐',
+              SleepTime:'算法',
+              AwakeTime:'大腐',
+              Expectation:'发仿',
+              WantHouse:0,
+              AvatarURL:''
+            }]
         }
     },
     methods:{
@@ -283,10 +305,26 @@ export default {
           this.registering=false
         },
         searchRoommateFirstPage() {
-          this.searchRoommate(0)
+          this.searchRoommate(1)
         },
-        searchRoommate() {
-
+        searchRoommate(pageNum) {
+          let url='/profile/search'
+          axios.post(url,{
+            Token:this.$store.state.loginInfo.token,
+            UserID:this.$store.state.loginInfo.userID,
+            Keyword:this.keyword,
+            PageSize:this.pageSize,
+            PageNum:pageNum-1
+          }).then(res=>{
+            if(res.data.Result=="OK"){
+              this.profiles=res.data.Profiles
+              this.itemNumber=res.data.Number
+            }else{
+              console.log("[searchRoommate]",res.data.Result)
+            }
+          }).catch(err=>{
+            console.log("[searchRoommate]",err)
+          })
         },
         searchHouseFirstPage(){
           this.searchHouse(1)
@@ -326,6 +364,13 @@ export default {
           }).catch(err=>{
             console.log(err)
           })
+        },
+        changePage(pageNum){
+          if(this.isSearchingHouse){
+            this.searchHouse(pageNum)
+          }else{
+            this.searchRoommate(pageNum)
+          }
         },
         contact(HouseID){
           console.log(HouseID)
@@ -398,7 +443,12 @@ export default {
       }
     },
     components:{
-      tableItemHouse
+      tableItemHouse,
+      TableItemProfile
+    },
+    created(){
+      this.searchHouseFirstPage()
+      this.isSearchingHouse=true
     }
 }
 </script>

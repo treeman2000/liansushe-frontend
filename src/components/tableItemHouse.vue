@@ -20,6 +20,9 @@
     <el-col :span=12>户型：{{houseInfo.Room}}室{{houseInfo.Hall}}厅</el-col>
     <el-col :span=12>设施：{{getFacility()}}</el-col>
   </el-row>
+  <el-row>
+    <el-col :span="12">房屋ID：{{houseInfo.HouseID}}</el-col>
+  </el-row>
   
 </div>  
 </template>
