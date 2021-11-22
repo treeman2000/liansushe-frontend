@@ -8,7 +8,7 @@
       
       <el-container style="height:500px;border:1px solid #eee">
         <el-aside width="200px">
-            <el-avatar shape="square" :size="150" :src="avatarUrl" ></el-avatar>
+            <el-avatar shape="square" :size="150" :src="$store.state.avatarURL" ></el-avatar>
             <el-row >{{$store.state.loginInfo.userName}}</el-row>
           <el-menu>
             <el-menu-item-group >
@@ -20,10 +20,7 @@
           </el-menu>
         </el-aside>
         <el-main v-if="showValue==1">
-          <el-descriptions title="用户信息">
-            <el-descriptions-item label="用户名" >{{personInfo.userName}}</el-descriptions-item>
-            <el-descriptions-item label="手机号码">{{personInfo.teleNumber}}</el-descriptions-item> 
-          </el-descriptions>
+          <user-profile></user-profile>
         </el-main>
         <el-main v-if="showValue==2" >
           <el-form label-width="100px" >
@@ -148,17 +145,13 @@
 <script>
 import axios from 'axios';
 import tableItemHouse from '../components/tableItemHouse.vue'
+import UserProfile from '../components/userProfile.vue';
 
 export default {
   data(){
     
     return{
       showValue:1,
-      personInfo:{
-        userName:'bb',
-        teleNumber:'136'
-      },
-      avatarUrl:require("../assets/MainImg.jpg"),
       HouseInfo:{
         Place:'',
         Center:'',
@@ -350,7 +343,8 @@ export default {
     }
   },
   components:{
-      tableItemHouse
+      tableItemHouse,
+    UserProfile
   },
   mounted(){
     this.updateUUID()

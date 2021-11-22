@@ -12,6 +12,7 @@ export default new Vuex.Store({
       password: 'default password',
       token: 'default token'
     },
+    avatarURL:''
   },
   mutations: {
     login(state,loginInfo) {
@@ -20,6 +21,9 @@ export default new Vuex.Store({
     },
     leave(state) {
       state.authorized = false
+    },
+    setAvatarURL(state,url) {
+      state.avatarURL=url
     }
   },
   actions: {

@@ -54,10 +54,10 @@
         <div class="bgImg">
           <el-row  style='height:400px'>
           </el-row>
-        <el-row >
+        <el-row style="margin-bottom:5px">
           <el-col :span='8' :offset='8'>
-            <el-button type="text" @click="isSearchingHouse=true">搜好房</el-button>
-            <el-button type="text" @click="isSearchingHouse=false">找室友</el-button>
+            <el-button round size='small' @click="isSearchingHouse=true;searchHouseFirstPage()">搜好房</el-button>
+            <el-button round size='small' @click="isSearchingHouse=false;searchRoommateFirstPage()">找室友</el-button>
           </el-col>
         </el-row>
         <el-row v-if='isSearchingHouse' type="flex" justify="center">
