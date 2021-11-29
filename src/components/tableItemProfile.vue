@@ -50,7 +50,8 @@ export default {
   },
   methods:{
     contact(){
-
+      // 默认发一条你好，这样拉消息列表的时候才有这个人
+      // 跳转到聊天界面
     },
     getHouseInfo(){
       console.log("[getHouseInfo]")

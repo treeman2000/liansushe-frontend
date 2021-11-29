@@ -7,6 +7,7 @@
       </el-container>
       
       <el-container style="height:500px;border:1px solid #eee">
+        <!-- 侧边栏 -->
         <el-aside width="200px">
             <el-avatar shape="square" :size="150" :src="$store.state.avatarURL" ></el-avatar>
             <el-row >{{$store.state.loginInfo.userName}}</el-row>
@@ -15,10 +16,11 @@
               <el-menu-item index="1" @click="showValue=1">个人信息</el-menu-item>
               <el-menu-item index="2" @click="showValue=2">添加房屋</el-menu-item>
               <el-menu-item index="3" @click="checkHouse">查看房屋</el-menu-item>
-              
+              <el-menu-item index="4" @click="showValue=4">聊天</el-menu-item>
             </el-menu-item-group>
           </el-menu>
         </el-aside>
+
         <el-main v-if="showValue==1">
           <user-profile></user-profile>
         </el-main>
@@ -138,6 +140,9 @@
             </el-pagination>
           </div>
         </el-main>
+        <el-main v-if="showValue==4">
+          <chat style="height:100%"></chat>
+        </el-main>
       </el-container>
   </div>
 </template>
@@ -146,6 +151,7 @@
 import axios from 'axios';
 import tableItemHouse from '../components/tableItemHouse.vue'
 import UserProfile from '../components/userProfile.vue';
+import Chat from '../components/chat.vue';
 
 export default {
   data(){
@@ -343,8 +349,9 @@ export default {
     }
   },
   components:{
-      tableItemHouse,
-    UserProfile
+    tableItemHouse,
+    UserProfile,
+    Chat
   },
   mounted(){
     this.updateUUID()
