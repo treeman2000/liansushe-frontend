@@ -8,6 +8,7 @@ liansushe.exe
 test.js
 *.zip
 /vr
+/avatar
 
 # local env files
 .env.local

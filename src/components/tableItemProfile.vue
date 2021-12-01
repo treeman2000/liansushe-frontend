@@ -52,6 +52,7 @@ export default {
     contact(){
       // 默认发一条你好，这样拉消息列表的时候才有这个人
       // 跳转到聊天界面
+      this.$router.push({path:'./profile',query:{showValue:4,targetID:this.profile.UserID}})
     },
     getHouseInfo(){
       console.log("[getHouseInfo]")

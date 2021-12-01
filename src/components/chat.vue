@@ -16,7 +16,7 @@
       <el-container>
         <el-main style="height:60%;" class="infinite-list-wrapper">
           <ul class="list" infinite-scroll-disabled="disabled">
-            <li v-for="item in messageMap[targetUserID]" :key="item">{{item}}</li>
+            <message v-for="item in messageMap[targetUserID]" :key="item" :message="item"></message>
           </ul>
         </el-main>
         <el-footer style="height:40%; text-align:right">
@@ -30,19 +30,23 @@
 
 <script>
 import axios from 'axios'
+import message from './message.vue'
 export default {
+  components: { message },
+  props:['initTargetID'],
   data(){
     return{
       messageToSend:'',
       chatList:[{UserID:"uid1",UserName:"uName1"},
         {UserID:"uid2",UserName:"uName2"},
       ],
-      messageMap:{"localID":[{
-        UserID:"localID",
-        UserName:"localName",
-        Message:"rarara",
-        IsSelf:true
-      }]},
+      // messageMap:{"localID":[{
+      //   UserID:"localID",
+      //   UserName:"localName",
+      //   Message:"rarara",
+      //   IsSelf:true
+      // }]},
+      messageMap:{},
       ws:WebSocket,
       targetUserID:'localID'
     }
@@ -79,6 +83,13 @@ export default {
     },
     onopen(){
       console.log('ws连接成功')
+      if(this.initTargetID!=''){
+      this.targetUserID=this.initTargetID
+      this.messageToSend='你好呀'
+      this.sendMessage()
+      this.messageToSend=''
+      }
+      this.getChatList()
     },
     onerror(){
       console.log('err in ws')
@@ -98,13 +109,19 @@ export default {
       console.log("socket已经关闭")
     },
     sendMessage(){
-      let m=JSON.stringify({"TargetUserID":"targetID",
+      let m=JSON.stringify({"TargetUserID":this.targetUserID,
       "Message":this.messageToSend})
+      let i=0
+      while(this.ws.readyState!=1){
+        i++
+      }
+      console.log(i)
       this.ws.send(m)
       console.log(this.messageMap)
     }
   },
   created(){
+    console.log("in chat init")
     this.wsInit()
     this.getChatList()
   }

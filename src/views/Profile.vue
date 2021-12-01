@@ -141,7 +141,7 @@
           </div>
         </el-main>
         <el-main v-if="showValue==4">
-          <chat style="height:100%"></chat>
+          <chat style="height:100%" :initTargetID='initTargetID'></chat>
         </el-main>
       </el-container>
   </div>
@@ -237,7 +237,8 @@ export default {
       filterValue:'all',
       pageSize:10,
       itemNumber:undefined,
-      hideOnSinglePage:false
+      hideOnSinglePage:false,
+      initTargetID:''
     };
   },
   methods:{
@@ -355,6 +356,13 @@ export default {
   },
   mounted(){
     this.updateUUID()
+  },
+  created(){
+    if(this.$route.query.showValue==4){
+      console.log('确实是4',this.$route.query)
+      this.showValue=4
+      this.initTargetID=this.$route.query.targetID
+    }
   }
 }
 </script>
